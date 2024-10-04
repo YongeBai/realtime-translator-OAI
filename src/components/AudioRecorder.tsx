@@ -16,7 +16,7 @@ const AudioRecorder: React.FC = () => {
         });
 
         client.updateSession({
-            instructions: 'Staring now you are a translator, translate all the English I say to you to Chinese. Respond with just the audio translation and nothing else.',
+            instructions: 'Staring now you are a translator, translate everything I say to you to Chinese, if you dont recognize the word for example if it is a name of a person or company just say the word. Respond with just the audio translation and nothing else.',
             voice: 'alloy',
             input_audio_transcription: { model: 'whisper-1' },
         });
@@ -30,7 +30,7 @@ const AudioRecorder: React.FC = () => {
         });
 
         clientRef.current = client;
-        audioContextRef.current = new (window.AudioContext || window.webkitAudioContext)();
+        audioContextRef.current = new (window.AudioContext)();
 
         return () => {
             client.disconnect();
@@ -99,7 +99,7 @@ const AudioRecorder: React.FC = () => {
             mediaRecorder.onstop = async () => {
                 const audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
                 const arrayBuffer = await audioBlob.arrayBuffer();
-                const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                const audioContext = new (window.AudioContext)();
                 const audioBuffer = await audioContext.decodeAudioData(arrayBuffer);
                 const float32Array = audioBuffer.getChannelData(0);
                 const int16Array = new Int16Array(float32Array.length);
@@ -131,7 +131,6 @@ const AudioRecorder: React.FC = () => {
             <button onClick={isRecording ? stopRecording : startRecording}>
                 {isRecording ? 'Stop Recording' : 'Start Recording'}
             </button>
-            {hasResponse && <p>Response received and playing!</p>}
         </div>
     );
 };
